@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>장바구니</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --coffee-brown: #5c3b2e;  /* 진한 커피색 */
+            --latte-foam: #f3e0c1;    /* 라떼 색상 */
+            --cream-bg: #fff7e1;      /* 크림색 배경 */
+            --button-bg: #d9a676;     /* 버튼 색상 */
+            --text-color: #3e2723;    /* 텍스트 색상 */
+            --border-radius: 10px;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: linear-gradient(90deg, var(--coffee-brown), #402218);
+            color: white;
+        }
+
+        .navbar .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #f8f9fa !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar .nav-link {
+            color: #f8f9fa;
+        }
+        .navbar .nav-link:hover {
+            color: var(--button-bg);
+        }
+
+        /* 제목 */
+        .d-flex h2 {
+            font-weight: bold;
+            color: var(--coffee-brown);
+        }
+
+        /* 장바구니 테이블 */
+        .table thead {
+            background-color: var(--latte-foam);
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+            color: var(--text-color);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1e5d1;
+        }
+
+        /* 버튼 */
+        .btn-outline-primary, .btn-primary, .btn-success {
+            border-radius: var(--border-radius);
+        }
+
+        /* 상품목록 버튼 */
+        .btn-outline-primary {
+            color: var(--coffee-brown);
+            border-color: var(--coffee-brown);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--coffee-brown);
+            color: white;
+        }
+
+        /* 장바구니 버튼 */
+        .btn-primary {
+            background-color: var(--coffee-brown);
+            color: white;
+            border-color: var(--coffee-brown); /* 파란색 테두리 변경 */
+        }
+
+        .btn-primary:hover {
+            background-color: #4b2b1d;
+        }
+
+        .btn-success {
+            background-color: var(--button-bg);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #d48b56;
+        }
+
+        /* 합계 영역 */
+        .text-end .fs-5 {
+            font-weight: bold;
+            color: var(--coffee-brown);
+        }
+
+        /* 장바구니 비었을 때 메시지 */
+        #cart-empty {
+            background-color: var(--latte-foam);
+            color: var(--coffee-brown);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+    <a class="navbar-brand" href="/">cafe</a>
+    <div class="ms-auto">
+        <!-- 상품목록 버튼 색상 수정 -->
+        <a href="/products" class="btn btn-outline-primary me-2">상품목록</a>
+        <!-- 장바구니 버튼 색상 수정 -->
+        <a href="/cart" class="btn btn-primary">장바구니</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">장바구니</h2>
+        <div>
+            <a href="/products" class="btn btn-outline-secondary">계속 쇼핑하기</a>
+        </div>
+    </div>
+
+    <!-- 장바구니 비었을 때 -->
+    <div id="cart-empty" class="alert alert-info" style="display:none">
+        장바구니가 비어 있어요. <a href="/products" class="alert-link">상품 보러가기</a>
+    </div>
+
+    <!-- 장바구니 테이블 -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th style="width:60%">상품</th>
+                    <th>가격</th>
+                    <th style="width:140px">수량</th>
+                    <th>소계</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="cartTableBody">
+                <!-- 장바구니 아이템이 여기에 동적으로 추가됨 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 합계 영역 -->
+        <div class="d-flex justify-content-end p-3 border-top">
+            <div class="text-end">
+                <div class="fs-5">총 합계: <strong id="cartTotal">0원</strong></div>
+                <button id="btn-checkout" class="btn btn-success mt-2">주문하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/cart.js}"></script>
+</body>
+</html>

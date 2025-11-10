@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>고객 관리</title>
+    <script src="/js/customers.js" defer></script>
+    <style>
+        body { font-family: sans-serif; margin: 30px; }
+        input { margin-right: 10px; }
+        table { border-collapse: collapse; width: 60%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f3f3f3; }
+        button { margin-left: 5px; }
+    </style>
+</head>
+<body>
+<h1>고객 관리 프로그램</h1>
+
+<div>
+    <input type="text" id="name" placeholder="이름">
+    <input type="email" id="email" placeholder="이메일">
+    <button onclick="addCustomer()">추가</button>
+</div>
+
+<table>
+    <thead>
+    <tr><th>ID</th><th>이름</th><th>이메일</th><th>액션</th></tr>
+    </thead>
+    <tbody id="customer-table"></tbody>
+</table>
+</body>
+</html>
