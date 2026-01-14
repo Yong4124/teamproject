@@ -1,0 +1,484 @@
+/* =========================================
+   Cafe MSA – Global Shared Styles
+   ========================================= */
+
+/* ---------- Color palette ---------- */
+:root {
+    --coffee: #5c3b2e;  /* main dark coffee */
+    --latte:  #c9a28e;  /* latte cream */
+    --cream:  #fff7f1;  /* soft background */
+    --bean:   #2b1d17;  /* darkest text */
+    --accent: #0d6efd;  /* bootstrap-ish accent */
+}
+
+/* ---------- Layout base ---------- */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Nanum Gothic", system-ui, sans-serif;
+    background: #ffffff;
+    color: var(--bean);
+}
+
+/* 일반 내부 페이지 배경 (장바구니/즐찾/주문/관리자 등) */
+.body-cream {
+    background: #f7f3ed;
+}
+
+/* 로그인 / 회원가입 전용 배경 */
+.body-auth {
+    background: radial-gradient(circle at top,
+    #fce9d8 0,
+    #f6efe9 40%,
+    #f1e3d6 100%);
+}
+
+/* main 영역을 차지하고 footer는 아래로 */
+main,
+.main-content {
+    flex: 1 0 auto;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+    background: linear-gradient(90deg, #1f1f1f, #2a2a2a);
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+
+.navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: .3px;
+    color: #fff !important;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.brand-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+    #8b5e3c,
+    #5c3b2e 60%,
+    #2b1d17);
+    box-shadow: 0 0 0 2px rgba(255,255,255,.15) inset;
+    display: inline-block;
+}
+
+.navbar .nav-link {
+    color: #e9ecef !important;
+    opacity: .85;
+    transition: opacity .2s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    opacity: 1;
+}
+
+.navbar .nav-link.text-warning {
+    color: #ffd66b !important;
+}
+
+/* ---------- Hero (index) ---------- */
+
+.hero {
+    position: relative;
+    background: linear-gradient(180deg,
+    #2b1d17 0%,
+    #3a2921 40%,
+    #4b342a 100%);
+    color: #fff;
+    overflow: hidden;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -20% -40% -20%;
+    height: 80%;
+    border-radius: 50%;
+    background: radial-gradient(
+            closest-side,
+            rgba(255,255,255,.07),
+            transparent 70%);
+    pointer-events: none;
+}
+
+.hero-img {
+    background:
+            url("https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1400&auto=format&fit=crop")
+            center/cover no-repeat;
+    min-height: 280px;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+.hero .badge {
+    background: linear-gradient(90deg, #c58c5b, #8b5e3c);
+}
+
+/* ---------- Feature section (index) ---------- */
+
+.section {
+    background: var(--cream);
+}
+
+.feature-card {
+    border: none;
+    border-radius: 1.25rem;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,.08);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 26px rgba(0,0,0,.12);
+}
+
+.icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #f2e3da;
+    color: var(--coffee);
+}
+
+.price-chip {
+    font-weight: 600;
+    color: var(--bean);
+    background: #f7efe9;
+    border-radius: 999px;
+    padding: .25rem .6rem;
+}
+
+/* ---------- Page titles & cards ---------- */
+
+.page-title {
+    font-weight: 800;
+    letter-spacing: .2px;
+    color: var(--coffee);
+}
+
+/* elevated content card (리스트 / 관리자 / 장바구니 등) */
+.card-elevated,
+.panel-card {
+    border: none;
+    border-radius: 1.25rem;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn-coffee {
+    background-color: var(--coffee);
+    border-color: var(--coffee);
+    color: #fff;
+    border-radius: 10px;
+}
+
+.btn-coffee:hover {
+    background-color: #4b2b1d;
+    border-color: #4b2b1d;
+    color: #fff;
+}
+
+.btn-outline-coffee {
+    color: var(--coffee);
+    border-color: var(--coffee);
+    border-radius: 10px;
+}
+
+.btn-outline-coffee:hover {
+    background-color: var(--coffee);
+    color: #fff;
+    border-color: var(--coffee);
+}
+
+/* 부드러운 포인트 버튼 (삭제·비우기·발주 등) */
+.btn-soft {
+    background-color: #d9a676;
+    border-color: #d9a676;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.btn-soft:hover {
+    background-color: #d48b56;
+    border-color: #d48b56;
+}
+
+/* ---------- Tables ---------- */
+
+.table-cafe thead th,
+.table-light thead th {
+    background-color: var(--latte);
+    color: var(--coffee);
+    border-bottom: 2px solid var(--coffee);
+}
+
+.table-cafe tbody tr:hover,
+.table-hover tbody tr:hover {
+    background-color: #f9f1e9;
+}
+
+/* 상품 썸네일 (상품 목록/관리용) */
+.product-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+/* ---------- 주문/발주 서브 네비 (order_* 페이지용) ---------- */
+
+.order-subnav .btn {
+    min-width: 100px;
+    border-radius: 999px;
+    font-size: .9rem;
+}
+
+.order-subnav .btn.active {
+    background-color: var(--coffee);
+    color: #fff;
+}
+
+/* ---------- Role badge (관리자 페이지) ---------- */
+
+.role-badge {
+    font-weight: 600;
+    color: var(--bean);
+    background: #f7efe9;
+    border-radius: 999px;
+    padding: .25rem .6rem;
+}
+
+/* ---------- Auth (로그인 / 회원가입 공통) ---------- */
+
+/* login & register에서 쓰이는 카드 */
+.auth-card {
+    max-width: 440px;
+    width: 100%;
+    margin: 60px auto;
+    background: #ffffffcc;
+    border-radius: 18px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+    border: 1px solid rgba(0,0,0,0.03);
+    padding: 22px 20px 24px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--coffee);
+}
+
+.auth-subtitle {
+    font-size: 0.88rem;
+    color: #8b6b52;
+}
+
+.auth-label {
+    font-weight: 500;
+    color: #5c4332;
+    font-size: 0.9rem;
+}
+
+.auth-input {
+    border-radius: 999px;
+    border-color: #e0c9b5;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.95rem;
+}
+
+.auth-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.15rem rgba(13,110,253,.18);
+}
+
+.auth-btn {
+    width: 100%;
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    font-size: 0.96rem;
+}
+
+/* 로그인 상단의 작은 칩 */
+.coffee-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: #f4e1cf;
+    color: #5a3b28;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.coffee-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+    #c58c5b,
+    #8b5e3c 70%,
+    #4a3328);
+}
+
+/* 모바일에서 auth 카드 간격 보정 */
+@media (max-width: 576px) {
+    .auth-card {
+        margin: 40px auto;
+        padding: 16px 14px 18px;
+        border-radius: 14px;
+    }
+    .auth-title {
+        font-size: 1.35rem;
+    }
+}
+
+/* ---------- Cart / Favorites 공통 empty box ---------- */
+
+.box-empty {
+    background-color: var(--latte);
+    color: var(--coffee);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+    background: #181818;
+    color: #bbb;
+    font-size: .9rem;
+    margin-top: auto;   /* 내용이 적어도 맨 아래 정렬 */
+}
+
+.footer a {
+    color: #e1e1e1;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* ---------- 공통 정사각형 페이지네이션 (상품/발주 공용) ---------- */
+
+.pagination-square-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.pagination-square {
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+.btn-page {
+    min-width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 12px;
+    border: 1px solid var(--coffee);
+    background-color: #fbf4ec;   /* 연한 크림색 */
+    color: var(--coffee);
+    font-weight: 500;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-page.active {
+    background-color: var(--coffee);
+    color: #fff;
+}
+
+.btn-page:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.fixed-table {
+    table-layout: fixed;
+    width: 100%;
+}
+.box-empty {
+    max-width: 600px;
+    margin: 40px auto 0;
+}
+
+/* 홈 전용 스크롤 스냅 컨테이너 */
+/* 전체 레이아웃: body는 세로로 쌓이고, main이 가운데에서 스크롤 */
+body.body-cream {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 가운데 스크롤 되는 영역 */
+.home-scroll {
+    flex: 1;                  /* 네비 + 푸터 빼고 나머지 높이를 차지 */
+    overflow-y: auto;         /* 여기서 스크롤 */
+    scroll-snap-type: y mandatory;
+}
+
+/* 한 화면씩 스냅되는 섹션들 */
+.home-section {
+    scroll-snap-align: start;
+    min-height: 100vh;        /* 섹션 하나가 화면 한 장 크기 */
+}
+
+.qty-pill {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    overflow: hidden;
+    min-width: 90px;
+    justify-content: space-between;
+    background: #fff;
+}
+
+.qty-btn {
+    border: none;
+    background: transparent;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.qty-value {
+    min-width: 32px;
+    text-align: center;
+    font-weight: 500;
+}

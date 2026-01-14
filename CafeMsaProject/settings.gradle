@@ -1,0 +1,12 @@
+rootProject.name = 'CafeMsaProject'
+
+include 'gateway-service'
+include 'eureka-server'
+include 'product-service'
+include 'order-service'
+include 'cart-service'
+include 'bookmark-service'
+include 'auth-service'
+include 'order-product-service'
+include 'order-cart-service'
+include 'order-orderlist-service'

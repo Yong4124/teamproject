@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>주문 확인 · Cafe MSA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ✅ 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- ✅ 주문 확인 페이지 전용 스타일 -->
+    <style>
+        /* 배경 톤 (상품/장바구니와 통일) */
+        body.body-cream {
+            background: radial-gradient(circle at top, #fff7f1 0, #f2ece5 45%, #e6dfd7 100%);
+        }
+
+        .main-content .container {
+            max-width: 1080px;
+        }
+
+        /* 제목 영역 */
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--coffee, #5c3b2e);
+        }
+
+        /* 공통 카드 스타일 */
+        .card-elevated {
+            border-radius: 1rem;
+            border: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
+        }
+
+        /* 진행 단계 표시 (장바구니 > 주문 확인 > 주문 완료) */
+        .checkout-steps {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            color: #907862;
+            margin-top: -0.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .checkout-step {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            background: #f6ece1;
+        }
+
+        .checkout-step.current {
+            background: #5c3b2e;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .checkout-step.completed {
+            background: #e4f7ea;
+            color: #256c3b;
+        }
+
+        .checkout-step i {
+            font-size: 0.9rem;
+        }
+
+        .checkout-arrow {
+            font-size: 0.9rem;
+            color: #c2aa90;
+        }
+
+        /* 비어 있을 때 박스 */
+        .box-empty {
+            margin-top: 0.75rem;
+        }
+
+        /* 주문 확인 레이아웃: 테이블 + 요약 박스 */
+        .checkout-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 992px) {
+            .checkout-layout {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        .checkout-table-area {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .checkout-summary-area {
+            flex: 0 0 260px;
+        }
+
+        .checkout-summary-card {
+            border-radius: 0.9rem;
+            border: 1px solid #f1e4d7;
+            background: #fffaf4;
+            padding: 1.25rem 1.3rem;
+        }
+
+        .checkout-summary-card h6 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #5c3b2e;
+            margin-bottom: 0.85rem;
+        }
+
+        .checkout-summary-total {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #3b2a1f;
+            margin-top: 0.35rem;
+        }
+
+        .checkout-summary-total strong {
+            font-size: 1.15rem;
+        }
+
+        .checkout-summary-actions .btn {
+            width: 100%;
+            margin-top: 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* 테이블 (상품/장바구니와 동일 컨셉) */
+        .table-cafe {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        .table-cafe thead {
+            background: linear-gradient(90deg, #5c3b2e, #8b5a3c);
+            color: #fff;
+        }
+
+        .table-cafe thead th {
+            border-bottom: none;
+            padding: 0.7rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .table-cafe tbody tr {
+            transition: background-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .table-cafe tbody td {
+            padding: 0.65rem 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #f1e4d7;
+        }
+
+        .table-cafe tbody tr:hover {
+            background: #fff7ed;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* radius */
+        .table-cafe thead tr:first-child th:first-child {
+            border-top-left-radius: 0.75rem;
+        }
+        .table-cafe thead tr:first-child th:last-child {
+            border-top-right-radius: 0.75rem;
+        }
+        .table-cafe tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 0.75rem;
+        }
+        .table-cafe tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 0.75rem;
+        }
+
+        /* 상품 컬럼 스타일 */
+        .checkout-product-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkout-product-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.6rem;
+            object-fit: cover;
+            background: #f5eee7;
+        }
+
+        .checkout-product-name {
+            font-weight: 600;
+            color: #4b3425;
+        }
+
+        .checkout-product-meta {
+            font-size: 0.78rem;
+            color: #a08f7e;
+        }
+
+        .checkout-price-cell,
+        .checkout-subtotal-cell {
+            white-space: nowrap;
+            font-weight: 600;
+            color: #3e2d23;
+        }
+
+        .checkout-qty-cell {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between.align-items-center.mb-0.p-3 {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.5rem;
+            }
+
+            .checkout-summary-area {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="body-cream">
+
+<!-- ✅ 공통 네비 -->
+<div th:replace="~{fragments/nav :: mainNav}"></div>
+
+<main class="main-content">
+    <div class="container mt-4"><!-- 다른 페이지와 동일하게 mt-4 사용 -->
+
+        <!-- ✅ 제목 영역 -->
+        <div class="d-flex justify-content-between align-items-center mb-0 p-3">
+            <div>
+                <h2 class="mb-1 page-title">
+                    <i class="bi bi-clipboard-check me-1"></i>
+                    주문 확인
+                </h2>
+                <!-- 진행 단계 표시 -->
+                <div class="checkout-steps">
+                    <div class="checkout-step completed">
+                        <i class="bi bi-bag"></i> 장바구니
+                    </div>
+                    <span class="checkout-arrow"><i class="bi bi-chevron-right"></i></span>
+                    <div class="checkout-step current">
+                        <i class="bi bi-clipboard-check"></i> 주문 확인
+                    </div>
+                    <span class="checkout-arrow"><i class="bi bi-chevron-right"></i></span>
+                    <div class="checkout-step">
+                        <i class="bi bi-check2-circle"></i> 주문 완료
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/cart" class="btn btn-outline-coffee">
+                    <i class="bi bi-arrow-left-circle me-1"></i>장바구니로
+                </a>
+                <a href="/products" class="btn btn-outline-coffee">
+                    <i class="bi bi-plus-circle me-1"></i>계속 쇼핑
+                </a>
+            </div>
+        </div>
+
+        <!-- 장바구니 비었을 때 -->
+        <div id="empty" class="box-empty d-none">
+            <div class="card card-elevated text-center py-5">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="mb-3">
+                        <i class="bi bi-bag-x fs-1 text-muted"></i>
+                    </div>
+                    <h4 class="mb-2">주문할 상품이 없습니다</h4>
+                    <p class="text-muted mb-4">
+                        장바구니에서 상품을 담고 주문을 진행해 주세요 ☕🍰
+                    </p>
+                    <a href="/products" class="btn btn-coffee">
+                        <i class="bi bi-cup-hot me-1"></i>
+                        상품 보러가기
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ 주문 확인 카드 (테이블 + 주문 요약) -->
+        <div class="card card-elevated mt-3">
+            <div class="p-3">
+                <div class="checkout-layout">
+                    <!-- 🔹 주문 상품 목록 영역 -->
+                    <div class="checkout-table-area">
+                        <div class="table-responsive">
+                            <table class="table table-cafe table-hover align-middle mb-0">
+                                <thead>
+                                <tr>
+                                    <th>상품</th>
+                                    <th>단가</th>
+                                    <th>수량</th>
+                                    <th>소계</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tbody">
+                                <!-- JS로 주문 상품들이 렌더링됨 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 🔹 오른쪽 주문 요약 영역 -->
+                    <aside class="checkout-summary-area">
+                        <div class="checkout-summary-card">
+                            <h6>주문 요약</h6>
+                            <!-- 필요하면 JS에서 항목 추가 가능
+                            <div class="checkout-summary-row">
+                                <span>상품 금액</span>
+                                <span id="orderSubtotal">0원</span>
+                            </div>
+                            <div class="checkout-summary-row">
+                                <span>배송비</span>
+                                <span>0원</span>
+                            </div>
+                            -->
+                            <div class="checkout-summary-total">
+                                총 합계: <strong id="sum">0원</strong>
+                            </div>
+
+                            <div class="checkout-summary-actions mt-3">
+                                <button id="btn-confirm" class="btn btn-coffee">
+                                    <i class="bi bi-credit-card me-1"></i>주문 확정
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="~{fragments/footer :: mainFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/nav-common.js}"></script>
+<script th:src="@{/js/user_checkout.js}"></script>
+</body>
+</html>

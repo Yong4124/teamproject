@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>즐겨찾기 · Cafe MSA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- ✅ 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+    <!-- ✅ 즐겨찾기 전용 스타일 약간 추가 -->
+    <style>
+        .main-content .container {
+            max-width: 960px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--coffee, #5c3b2e);
+        }
+
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: #8f7a63;
+        }
+
+        .card-elevated {
+            border-radius: 1rem;
+            border: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
+        }
+
+        .favorite-heart {
+            color: #e24f6b;
+        }
+
+        .fav-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.78rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 999px;
+            background: #ffe9f0;
+            color: #c53f5a;
+        }
+
+        .fav-product-name {
+            font-weight: 600;
+            color: #4b3425;
+        }
+
+        .fav-product-meta {
+            font-size: 0.78rem;
+            color: #a08f7e;
+        }
+
+        .fav-btn-icon {
+            padding-inline: 0.6rem;
+        }
+    </style>
+</head>
+<body class="body-cream">
+
+<!-- ✅ 공통 네비게이션 -->
+<div th:replace="~{fragments/nav :: mainNav}"></div>
+
+<main class="main-content">
+    <div class="container mt-4">
+
+        <!-- ✅ 제목 영역 (다른 페이지와 동일한 구조) -->
+        <div class="d-flex justify-content-between align-items-center mb-0 p-3">
+            <div>
+                <h2 class="page-title mb-1">
+                    <i class="bi bi-heart-fill favorite-heart me-2"></i>
+                    내 즐겨찾기
+                </h2>
+                <div class="page-subtitle">
+                    자주 주문하는 메뉴를 모아두고 한 번에 장바구니에 담아보세요.
+                </div>
+            </div>
+            <a href="/products" class="btn btn-outline-coffee">
+                <i class="bi bi-plus-lg me-1"></i>상품 보러가기
+            </a>
+        </div>
+
+        <!-- ✅ 비어 있을 때 카드 -->
+        <div id="fav-empty" class="box-empty d-none">
+            <div class="card card-elevated text-center py-5">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="mb-3">
+                        <i class="bi bi-heart favorite-heart fs-1"></i>
+                    </div>
+                    <h4 class="mb-2">즐겨찾기한 메뉴가 아직 없어요</h4>
+                    <p class="text-muted mb-4">
+                        자주 마시는 커피와 디저트를 즐겨찾기에 추가해 두고 빠르게 주문해보세요 ☕💖
+                    </p>
+                    <a href="/products" class="btn btn-coffee">
+                        <i class="bi bi-cup-hot me-1"></i>
+                        상품 보러가기
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 에러 영역 -->
+        <div id="fav-error" class="alert alert-danger d-none mt-3"></div>
+
+        <!-- ✅ 즐겨찾기 목록 카드 -->
+        <div class="card card-elevated mt-3 d-none" id="fav-card">
+            <div class="p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="fav-tag">
+                        <i class="bi bi-heart-fill"></i> 즐겨찾기 목록
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-cafe table-hover mb-0 align-middle">
+                        <thead>
+                        <tr>
+                            <th style="width:60px;">#</th>
+                            <th>상품</th>
+                            <th style="width:120px;">카테고리</th>
+                            <th class="text-end" style="width:140px;">가격</th>
+                            <th class="text-end" style="width:110px;">담기</th>
+                            <th class="text-end" style="width:110px;">삭제</th>
+                        </tr>
+                        </thead>
+                        <tbody id="fav-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="~{fragments/footer :: mainFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 공통 네비/로그인 상태 관리 -->
+<script th:src="@{/js/nav-common.js}"></script>
+
+<script>
+    // ===== 유저/공통 =====
+    let CURRENT_USER_ID = null;
+
+    function resolveUserId() {
+        const fromNew   = localStorage.getItem('userId');
+        const fromLocal = localStorage.getItem('USER_ID');
+        const fromSess  = sessionStorage.getItem('USER_ID');
+        return fromNew || fromLocal || fromSess || '1';
+    }
+
+    // ===== 즐겨찾기 목록 불러오기 =====
+    async function loadFavorites() {
+        const bodyEl  = document.getElementById('fav-body');
+        const cardEl  = document.getElementById('fav-card');
+        const emptyEl = document.getElementById('fav-empty');
+        const errorEl = document.getElementById('fav-error');
+
+        bodyEl.innerHTML = '';
+        errorEl.classList.add('d-none');
+        errorEl.textContent = '';
+
+        try {
+            const res = await fetch('/api/bookmarks', {
+                method: 'GET',
+                headers: {
+                    'X-User-Id': String(CURRENT_USER_ID)  // ✅ 북마크 서비스용 헤더
+                }
+            });
+
+            if (!res.ok) throw new Error('즐겨찾기 데이터를 불러오지 못했습니다.');
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                cardEl.classList.add('d-none');
+                emptyEl.classList.remove('d-none');
+                return;
+            }
+
+            emptyEl.classList.add('d-none');
+            cardEl.classList.remove('d-none');
+
+            data.forEach((bm, i) => {
+                const tr = document.createElement('tr');
+                const priceText =
+                    bm.price != null ? Number(bm.price).toLocaleString() + '원' : '-';
+
+                tr.innerHTML = `
+                    <td class="text-muted">${i + 1}</td>
+                    <td>
+                        <div class="fav-product-name">${bm.productName ?? '(이름 없음)'}</div>
+                        <div class="fav-product-meta">상품 ID: #${bm.productId}</div>
+                    </td>
+                    <td>${bm.category ?? '-'}</td>
+                    <td class="text-end fw-semibold">${priceText}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-coffee fav-btn-icon"
+                                title="장바구니에 담기"
+                                onclick="addFromFavoriteToCart(${bm.productId})">
+                            <i class="bi bi-bag-plus"></i>
+                        </button>
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-soft fav-btn-icon"
+                                title="즐겨찾기 삭제"
+                                onclick="deleteFavorite(${bm.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                bodyEl.appendChild(tr);
+            });
+        } catch (err) {
+            errorEl.textContent = err.message || '알 수 없는 오류가 발생했습니다.';
+            errorEl.classList.remove('d-none');
+            cardEl.classList.add('d-none');
+            emptyEl.classList.add('d-none');
+        }
+    }
+
+    // ===== 즐겨찾기에서 장바구니로 담기 =====
+    async function addFromFavoriteToCart(productId) {
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-USER-ID': String(CURRENT_USER_ID)   // ✅ 장바구니 서비스용 헤더 (다른 페이지와 동일)
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: 1
+                })
+            });
+
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`장바구니 담기에 실패했습니다. ${text}`);
+            }
+
+            window.location.href = '/cart';
+        } catch (err) {
+            alert(err.message || '장바구니로 보내는 중 오류가 발생했습니다.');
+        }
+    }
+
+    // ===== 즐겨찾기 삭제 =====
+    async function deleteFavorite(id) {
+        if (!confirm('이 즐겨찾기를 삭제할까요?')) return;
+
+        try {
+            const res = await fetch(`/api/bookmarks/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-User-Id': String(CURRENT_USER_ID)   // ✅ 북마크 서비스용 헤더
+                }
+            });
+            if (!res.ok) throw new Error('삭제에 실패했습니다.');
+            await loadFavorites();
+        } catch (err) {
+            alert(err.message || '삭제 중 오류가 발생했습니다.');
+        }
+    }
+
+    // ===== 초기 진입 =====
+    document.addEventListener('DOMContentLoaded', () => {
+        const token    = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+
+        if (!token || !username) {
+            alert('로그인이 필요합니다.');
+            location.href = '/login';
+            return;
+        }
+
+        CURRENT_USER_ID = resolveUserId();
+        loadFavorites().catch(console.error);
+    });
+</script>
+</body>
+</html>

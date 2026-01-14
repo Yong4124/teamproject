@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>즐겨찾기 - Cafe MSA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- ✅ 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="body-cream">
+
+<!-- ✅ 공통 네비게이션 -->
+<div th:replace="~{fragments/nav :: mainNav}"></div>
+
+<main class="main-content">
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">홈</a></li>
+                <li class="breadcrumb-item active" aria-current="page">즐겨찾기</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="page-title mb-0">
+                <i class="bi bi-heart text-danger me-2"></i>내 즐겨찾기
+            </h3>
+            <a href="/products" class="btn btn-outline-coffee btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>상품 보러가기
+            </a>
+        </div>
+
+        <!-- 비어 있을 때 -->
+        <div id="fav-empty" class="alert alert-warning box-empty d-none">
+            즐겨찾기한 메뉴가 없습니다. <a href="/products" class="alert-link">상품 페이지</a>에서 추가해 보세요!
+        </div>
+        <div id="fav-error" class="alert alert-danger d-none"></div>
+
+        <div class="card card-elevated mt-3" id="fav-card" style="display:none;">
+            <div class="table-responsive">
+                <table class="table table-cafe table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>상품명</th>
+                        <th>카테고리</th>
+                        <th class="text-end">가격</th>
+                        <th class="text-end" style="width:90px;">담기</th>
+                        <th class="text-end" style="width:90px;">삭제</th>
+                    </tr>
+                    </thead>
+                    <tbody id="fav-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="~{fragments/footer :: mainFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 공통 네비/로그인 상태 관리 -->
+<script th:src="@{/js/nav-common.js}"></script>
+<script>
+    const USER_ID = 1;
+
+    async function loadFavorites() {
+        const bodyEl = document.getElementById('fav-body');
+        const cardEl = document.getElementById('fav-card');
+        const emptyEl = document.getElementById('fav-empty');
+        const errorEl = document.getElementById('fav-error');
+
+        bodyEl.innerHTML = '';
+        errorEl.classList.add('d-none');
+
+        try {
+            const res = await fetch(`/api/bookmarks?userId=${USER_ID}`);
+            if (!res.ok) throw new Error('즐겨찾기 데이터를 불러오지 못했습니다.');
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                cardEl.style.display = 'none';
+                emptyEl.classList.remove('d-none');
+                return;
+            }
+
+            emptyEl.classList.add('d-none');
+            cardEl.style.display = 'block';
+
+            data.forEach((bm, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>
+                        <div class="fw-semibold">${bm.productName ?? '(이름 없음)'}</div>
+                        <small class="text-muted">#${bm.productId}</small>
+                    </td>
+                    <td>${bm.category ?? '-'}</td>
+                    <td class="text-end">${bm.price != null ? bm.price.toLocaleString() + '원' : '-'}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-coffee" onclick="addFromFavoriteToCart(${bm.productId})">
+                            <i class="bi bi-bag-plus"></i>
+                        </button>
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-soft" onclick="deleteFavorite(${bm.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                bodyEl.appendChild(tr);
+            });
+        } catch (err) {
+            errorEl.textContent = err.message || '알 수 없는 오류가 발생했습니다.';
+            errorEl.classList.remove('d-none');
+            cardEl.style.display = 'none';
+            emptyEl.classList.add('d-none');
+        }
+    }
+
+    async function addFromFavoriteToCart(productId) {
+        try {
+            const userId = localStorage.getItem('USER_ID')
+                || sessionStorage.getItem('USER_ID')
+                || '1';
+
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-USER-ID': userId
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: 1
+                })
+            });
+
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`장바구니 담기에 실패했습니다. ${text}`);
+            }
+
+            window.location.href = '/cart';
+        } catch (err) {
+            alert(err.message || '장바구니로 보내는 중 오류가 발생했습니다.');
+        }
+    }
+
+    async function deleteFavorite(id) {
+        if (!confirm('이 즐겨찾기를 삭제할까요?')) return;
+        try {
+            const res = await fetch(`/api/bookmarks/${id}`, {
+                method: 'DELETE'
+            });
+            if (!res.ok) throw new Error('삭제에 실패했습니다.');
+            loadFavorites();
+        } catch (err) {
+            alert(err.message || '삭제 중 오류가 발생했습니다.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFavorites();
+    });
+</script>
+</body>
+</html>

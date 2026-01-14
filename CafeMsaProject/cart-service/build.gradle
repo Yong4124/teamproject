@@ -1,0 +1,11 @@
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'      // WebClient
+
+    // ✅ 추가: Bean Validation(Jakarta) 어노테이션 인식
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // ✅ 추가: Lombok (컴파일 전용 + 애노테이션 프로세서)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}

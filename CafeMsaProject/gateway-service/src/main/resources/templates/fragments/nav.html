@@ -1,0 +1,80 @@
+<!-- templates/fragments/nav.html -->
+<nav th:fragment="mainNav" class="navbar navbar-expand-lg navbar-dark py-3">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="brand-dot"></span> Cafe MSA
+        </a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div id="navMain" class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <!-- 상품 -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">
+                        <i class="bi bi-cup-hot me-1"></i>상품
+                    </a>
+                </li>
+                <!-- 발주 (관리자) -->
+                <li class="nav-item d-none" id="purchaseNav">
+                    <a class="nav-link" href="/order_products">
+                        <i class="bi bi-truck me-1"></i>발주
+                    </a>
+                </li>
+                <!-- 일반 장바구니 -->
+                <li class="nav-item" id="cartNav">
+                    <a class="nav-link" href="/cart">
+                        <i class="bi bi-bag-check me-1"></i>장바구니
+                    </a>
+                </li>
+                <!-- 발주 장바구니 (관리자) -->
+                <li class="nav-item d-none" id="purchaseCartNav">
+                    <a class="nav-link" href="/order_carts">
+                        <i class="bi bi-bag-check me-1"></i>장바구니
+                    </a>
+                </li>
+                <!-- 발주 내역 (관리자) -->
+                <li class="nav-item d-none" id="purchaseOrdersNav">
+                    <a class="nav-link" href="/order_orderlist">
+                        <i class="bi bi-list-check me-1"></i>발주내역
+                    </a>
+                </li>
+                <!-- 주문 내역 (일반) -->
+                <li class="nav-item" id="ordersNav">
+                    <a class="nav-link" href="/orders">
+                        <i class="bi bi-receipt me-1"></i>주문내역
+                    </a>
+                </li>
+                <!-- 즐겨찾기 -->
+                <li class="nav-item" id="favoritesNav">
+                    <a class="nav-link" href="/favorites">
+                        <i class="bi bi-heart me-1"></i>즐겨찾기
+                    </a>
+                </li>
+                <!-- 관리자 메뉴 -->
+                <li class="nav-item d-none" id="adminNav">
+                    <a class="nav-link" href="/admin">
+                        <i class="bi bi-gear me-1"></i>관리자
+                    </a>
+                </li>
+            </ul>
+
+            <!-- 오른쪽 로그인/유저 영역 -->
+            <ul class="navbar-nav" id="authNav">
+                <li class="nav-item" id="loginNav">
+                    <a class="nav-link" href="/login">로그인</a>
+                </li>
+                <li class="nav-item d-none" id="userNav">
+                    <!-- ✅ JS에서 쓰는 id 이름: navUsername -->
+                    <span class="nav-link" id="navUsername"></span>
+                </li>
+                <li class="nav-item d-none" id="logoutNav">
+                    <a class="nav-link" href="#" id="logoutBtn">로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

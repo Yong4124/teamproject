@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="CafeMsaProject.cart-service.main" />
+        <module name="CafeMsaProject.gateway-service.main" />
+        <module name="CafeMsaProject.order-cart-service.main" />
+        <module name="CafeMsaProject.order-service.main" />
+        <module name="CafeMsaProject.auth-service.main" />
+        <module name="CafeMsaProject.order-product-service.main" />
+        <module name="CafeMsaProject.order-orderlist-service.main" />
+        <module name="CafeMsaProject.product-service.main" />
+        <module name="CafeMsaProject.bookmark-service.main" />
+        <module name="CafeMsaProject.eureka-server.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="17" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="CafeMsaProject.auth-service" options="-parameters" />
+      <module name="CafeMsaProject.auth-service.main" options="-parameters" />
+      <module name="CafeMsaProject.auth-service.test" options="-parameters" />
+      <module name="CafeMsaProject.bookmark-service" options="-parameters" />
+      <module name="CafeMsaProject.bookmark-service.main" options="-parameters" />
+      <module name="CafeMsaProject.bookmark-service.test" options="-parameters" />
+      <module name="CafeMsaProject.cart-service" options="-parameters" />
+      <module name="CafeMsaProject.cart-service.main" options="-parameters" />
+      <module name="CafeMsaProject.cart-service.test" options="-parameters" />
+      <module name="CafeMsaProject.customer-service" options="-parameters" />
+      <module name="CafeMsaProject.customer-service.main" options="-parameters" />
+      <module name="CafeMsaProject.customer-service.test" options="-parameters" />
+      <module name="CafeMsaProject.eureka-server" options="-parameters" />
+      <module name="CafeMsaProject.eureka-server.main" options="-parameters" />
+      <module name="CafeMsaProject.eureka-server.test" options="-parameters" />
+      <module name="CafeMsaProject.gateway-service" options="-parameters" />
+      <module name="CafeMsaProject.gateway-service.main" options="-parameters" />
+      <module name="CafeMsaProject.gateway-service.test" options="-parameters" />
+      <module name="CafeMsaProject.order-cart-service" options="-parameters" />
+      <module name="CafeMsaProject.order-cart-service.main" options="-parameters" />
+      <module name="CafeMsaProject.order-cart-service.test" options="-parameters" />
+      <module name="CafeMsaProject.order-orderlist-service" options="-parameters" />
+      <module name="CafeMsaProject.order-orderlist-service.main" options="-parameters" />
+      <module name="CafeMsaProject.order-orderlist-service.test" options="-parameters" />
+      <module name="CafeMsaProject.order-product-service" options="-parameters" />
+      <module name="CafeMsaProject.order-product-service.main" options="-parameters" />
+      <module name="CafeMsaProject.order-product-service.test" options="-parameters" />
+      <module name="CafeMsaProject.order-service" options="-parameters" />
+      <module name="CafeMsaProject.order-service.main" options="-parameters" />
+      <module name="CafeMsaProject.order-service.test" options="-parameters" />
+      <module name="CafeMsaProject.product-service" options="-parameters" />
+      <module name="CafeMsaProject.product-service.main" options="-parameters" />
+      <module name="CafeMsaProject.product-service.test" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="com.example.sb3_msa3.auth-service.main" options="-parameters" />
+      <module name="com.example.sb3_msa3.auth-service.test" options="-parameters" />
+      <module name="sb3_msa3.bookmark-service" options="-parameters" />
+      <module name="sb3_msa3.bookmark-service.main" options="-parameters" />
+      <module name="sb3_msa3.bookmark-service.test" options="-parameters" />
+      <module name="sb3_msa3.cart-service" options="-parameters" />
+      <module name="sb3_msa3.cart-service.main" options="-parameters" />
+      <module name="sb3_msa3.cart-service.test" options="-parameters" />
+      <module name="sb3_msa3.customer-service" options="-parameters" />
+      <module name="sb3_msa3.customer-service.main" options="-parameters" />
+      <module name="sb3_msa3.customer-service.test" options="-parameters" />
+      <module name="sb3_msa3.eureka-server" options="-parameters" />
+      <module name="sb3_msa3.eureka-server.main" options="-parameters" />
+      <module name="sb3_msa3.eureka-server.test" options="-parameters" />
+      <module name="sb3_msa3.gateway-service" options="-parameters" />
+      <module name="sb3_msa3.gateway-service.main" options="-parameters" />
+      <module name="sb3_msa3.gateway-service.test" options="-parameters" />
+      <module name="sb3_msa3.order-cart-service" options="-parameters" />
+      <module name="sb3_msa3.order-cart-service.main" options="-parameters" />
+      <module name="sb3_msa3.order-cart-service.test" options="-parameters" />
+      <module name="sb3_msa3.order-orderlist-service" options="-parameters" />
+      <module name="sb3_msa3.order-orderlist-service.main" options="-parameters" />
+      <module name="sb3_msa3.order-orderlist-service.test" options="-parameters" />
+      <module name="sb3_msa3.order-product-service" options="-parameters" />
+      <module name="sb3_msa3.order-product-service.main" options="-parameters" />
+      <module name="sb3_msa3.order-product-service.test" options="-parameters" />
+      <module name="sb3_msa3.order-service" options="-parameters" />
+      <module name="sb3_msa3.order-service.main" options="-parameters" />
+      <module name="sb3_msa3.order-service.test" options="-parameters" />
+      <module name="sb3_msa3.product-service" options="-parameters" />
+      <module name="sb3_msa3.product-service.main" options="-parameters" />
+      <module name="sb3_msa3.product-service.test" options="-parameters" />
+      <module name="sb3_msa3.review-service" options="-parameters" />
+      <module name="sb3_msa3.review-service.main" options="-parameters" />
+      <module name="sb3_msa3.review-service.test" options="-parameters" />
+    </option>
+  </component>
+</project>

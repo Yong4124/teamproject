@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service/CafeMsaProject.auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service/CafeMsaProject.auth-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bookmark-service/CafeMsaProject.bookmark-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bookmark-service/CafeMsaProject.bookmark-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cart-service/CafeMsaProject.cart-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cart-service/CafeMsaProject.cart-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-server/CafeMsaProject.eureka-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-server/CafeMsaProject.eureka-server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gateway-service/CafeMsaProject.gateway-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/gateway-service/CafeMsaProject.gateway-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/order-cart-service/CafeMsaProject.order-cart-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/order-cart-service/CafeMsaProject.order-cart-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/order-orderlist-service/CafeMsaProject.order-orderlist-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/order-orderlist-service/CafeMsaProject.order-orderlist-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/order-product-service/CafeMsaProject.order-product-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/order-product-service/CafeMsaProject.order-product-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/order-service/CafeMsaProject.order-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/order-service/CafeMsaProject.order-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/product-service/CafeMsaProject.product-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/product-service/CafeMsaProject.product-service.main.iml" />
+    </modules>
+  </component>
+</project>

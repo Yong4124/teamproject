@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>주문 상세 · Cafe MSA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ✅ 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="body-cream">
+
+<!-- ✅ 공통 네비 -->
+<div th:replace="~{fragments/nav :: mainNav}"></div>
+
+<main class="main-content">
+    <div class="container py-4">
+
+        <!-- 브레드크럼 -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">홈</a></li>
+                <li class="breadcrumb-item"><a href="/orders">내 주문</a></li>
+                <li class="breadcrumb-item active" aria-current="page">주문 상세</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 page-title">주문 상세</h3>
+            <div class="btn-group">
+                <a href="/orders" class="btn btn-outline-coffee">내 주문 목록</a>
+                <a href="/products" class="btn btn-soft">계속 쇼핑</a>
+                <button id="btn-print" class="btn btn-coffee">인쇄</button>
+            </div>
+        </div>
+
+        <!-- 로딩/에러 -->
+        <div id="loading" class="d-flex align-items-center mb-3" style="display:none;">
+            <div class="spinner-border me-2" role="status" aria-hidden="true"></div>
+            <strong>주문 정보를 불러오는 중…</strong>
+        </div>
+        <div id="error" class="alert alert-danger d-none"></div>
+
+        <!-- 주문 메타 카드 -->
+        <div class="card card-elevated mb-3">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="me-3">
+                        <div class="text-muted small mb-1">주문번호</div>
+                        <div class="h5 mb-0" id="orderNo">#—</div>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <div class="text-muted small mb-1">상태</div>
+                        <div id="statusWrap">
+                            <span class="badge rounded-pill bg-secondary">
+                                <i class="bi bi-bell"></i> NEW
+                            </span>
+                        </div>
+                    </div>
+                    <div class="vr d-none d-md-block"></div>
+                    <div>
+                        <div class="text-muted small mb-1">품목수</div>
+                        <div id="qty" class="fw-semibold">0</div>
+                    </div>
+                    <div class="vr d-none d-md-block"></div>
+                    <div>
+                        <div class="text-muted small mb-1">총 금액</div>
+                        <div id="total" class="h5 mb-0">0원</div>
+                    </div>
+                </div>
+                <div class="mt-2 text-muted" id="meta"></div>
+            </div>
+        </div>
+
+        <!-- 실제 테이블 -->
+        <div id="tableCard" class="card card-elevated d-none">
+            <div class="table-responsive">
+                <table class="table table-cafe mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>상품</th>
+                        <th class="text-end">단가</th>
+                        <th class="text-end">수량</th>
+                        <th class="text-end">소계</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="~{fragments/footer :: mainFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/nav-common.js}"></script>
+<script th:src="@{/js/order-detail.js?v=2}" defer></script>
+</body>
+</html>

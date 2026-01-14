@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 관리 · Cafe MSA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap & Icons (공통) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ✅ 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- ✅ 상품 관리 페이지 전용 스타일 -->
+    <style>
+        /* ---------- 전체 배경/레이아웃 ---------- */
+        body.body-cream {
+            background: radial-gradient(circle at top, #fff7f1 0, #f2ece5 45%, #e6dfd7 100%);
+        }
+
+        .main-content .container {
+            max-width: 1080px;
+        }
+
+        /* ---------- 상단 제목 영역 ---------- */
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--coffee, #5c3b2e);
+        }
+
+        .page-title i {
+            font-size: 1.6rem;
+        }
+
+        .btn-outline-coffee {
+            border-radius: 999px;
+            font-size: 0.9rem;
+            padding: 0.4rem 1rem;
+        }
+
+        /* ---------- 카드(하얀 박스) ---------- */
+        .card-elevated {
+            border-radius: 1rem;
+            border: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
+        }
+
+        /* ---------- 상품 툴바: 카테고리 필터 + 검색 ---------- */
+        .product-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .product-toolbar-label {
+            font-size: 0.85rem;
+            color: #7a6a5b;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .product-toolbar-label i {
+            font-size: 1rem;
+        }
+
+        .product-toolbar-right {
+            flex: 1 1 220px;
+            max-width: 260px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 2.25rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.95rem;
+            color: #aa8c71;
+        }
+
+        /* ---------- 카테고리 필터 버튼 ---------- */
+        .btn-group .btn-outline-coffee {
+            font-size: 0.82rem;
+            padding: 0.25rem 0.9rem;
+        }
+
+        .btn-outline-coffee.active,
+        .btn-outline-coffee:hover {
+            background-color: var(--coffee, #5c3b2e);
+            color: #fff;
+        }
+
+        /* ---------- 상품 테이블 기본 ---------- */
+        .table-cafe {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        /* 헤더 */
+        .table-cafe thead {
+            background: linear-gradient(90deg, #5c3b2e, #8b5a3c);
+            color: #fff;
+        }
+
+        .table-cafe thead th {
+            border-bottom: none;
+            padding: 0.7rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* 테이블 바디 */
+        .table-cafe tbody tr {
+            transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+        }
+
+        .table-cafe tbody td {
+            padding: 0.65rem 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #f1e4d7;
+        }
+
+        .table-cafe tbody tr:hover {
+            background: #fff7ed;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+
+        /* 첫/마지막 행 radius */
+        .table-cafe thead tr:first-child th:first-child {
+            border-top-left-radius: 0.75rem;
+        }
+        .table-cafe thead tr:first-child th:last-child {
+            border-top-right-radius: 0.75rem;
+        }
+
+        .table-cafe tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 0.75rem;
+        }
+        .table-cafe tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 0.75rem;
+        }
+
+        /* ID 컬럼 여백 줄이기 */
+        .table-cafe thead th:first-child,
+        .table-cafe tbody td:first-child {
+            padding-right: 6px;
+            text-align: center;
+            color: #8f7a63;
+            font-size: 0.8rem;
+        }
+
+        /* 상품명 컬럼 왼쪽 여백 줄이기 */
+        .table-cafe thead th:nth-child(2),
+        .table-cafe tbody td:nth-child(2) {
+            padding-left: 8px;
+        }
+
+        /* 상품명 링크 색상을 카페 갈색으로 */
+        .table-cafe tbody td:nth-child(2) a {
+            color: #6B4423 !important;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* 마우스 올렸을 때 */
+        .table-cafe tbody td:nth-child(2) a:hover {
+            color: #8B5A3C !important;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* 가격 컬럼 */
+        .table-cafe tbody td:nth-child(3) {
+            font-weight: 600;
+            color: #3e2d23;
+        }
+
+        /* ---------- 카테고리 / 품절 뱃지 ---------- */
+        .category-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            background: #fff4e5;
+            color: #7a4c29;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .category-pill i {
+            font-size: 0.9rem;
+        }
+
+        .category-pill.drink {
+            background: #e9f5ff;
+            color: #28527a;
+        }
+
+        .category-pill.food {
+            background: #fff3e0;
+            color: #8b5a3c;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .stock-badge i {
+            font-size: 0.9rem;
+        }
+
+        .stock-badge.in-stock {
+            background: #e7f5e6;
+            color: #2d6e22;
+        }
+
+        .stock-badge.sold-out {
+            background: #f5e7e6;
+            color: #b03020;
+        }
+
+        /* ---------- 액션 버튼 ---------- */
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            transition: all 0.18s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* ---------- 페이징 스타일 ---------- */
+        .pagination-square-wrapper {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination-square {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination-square .btn {
+            min-width: 2.5rem;
+            height: 2.5rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-square .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 모달 섹션 헤더 스타일 */
+        .modal-body h6 {
+            font-weight: 600;
+            color: var(--coffee, #5c3b2e);
+        }
+
+        .modal-body h6 i {
+            color: #aa8c71;
+        }
+
+        /* ---------- 반응형 ---------- */
+        @media (max-width: 768px) {
+            #btn-add-product, #btn-go-cart {
+                width: 100%;
+            }
+
+            .product-toolbar {
+                align-items: flex-start;
+            }
+
+            .product-toolbar-right {
+                max-width: 100%;
+            }
+
+            .table-responsive {
+                border-radius: 0.75rem;
+                border: 1px solid #f1e4d7;
+            }
+        }
+    </style>
+</head>
+<body class="body-cream">
+
+<!-- ✅ 공통 네비 -->
+<div th:replace="~{fragments/nav :: mainNav}"></div>
+
+<main class="main-content">
+    <div class="container mt-4">
+
+        <!-- ✅ 제목 영역 -->
+        <div class="d-flex justify-content-between align-items-center mb-0 p-3">
+            <h2 class="mb-0 page-title">
+                <i class="bi bi-cup-hot me-2"></i>
+                <span id="productPageTitleText">상품 관리</span>
+            </h2>
+            <div class="d-flex gap-2">
+                <!-- 사장(OWNER)일 때는 상품 추가, 유저(USER)일 때는 장바구니 버튼 -->
+                <button id="btn-add-product" class="btn btn-outline-coffee" type="button"
+                        onclick="showAddProductModal()">
+                    <i class="bi bi-plus-lg me-1"></i>상품 추가
+                </button>
+                <button id="btn-go-cart" class="btn btn-outline-coffee" type="button"
+                        onclick="location.href='/cart'">
+                    <i class="bi bi-cart3 me-1"></i>장바구니
+                </button>
+            </div>
+        </div>
+
+        <!-- ✅ 카드 영역 (테이블만) -->
+        <div class="card card-elevated">
+            <div class="p-3">
+
+                <!-- 🔹 상품 툴바: 필터 + 검색 -->
+                <div class="product-toolbar">
+                    <div class="product-toolbar-left">
+                        <div class="product-toolbar-label">
+                            <i class="bi bi-funnel"></i>
+                            <span>카테고리 필터</span>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="카테고리 필터">
+                            <button type="button"
+                                    class="btn btn-outline-coffee"
+                                    id="btn-filter-all"
+                                    onclick="setCategoryFilter('ALL')">
+                                전체
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-coffee"
+                                    id="btn-filter-drink"
+                                    onclick="setCategoryFilter('음료')">
+                                음료
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-coffee"
+                                    id="btn-filter-food"
+                                    onclick="setCategoryFilter('푸드')">
+                                푸드
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 검색 (필요 없으면 JS에서 안 써도 되고, 숨겨도 됨) -->
+                    <div class="product-toolbar-right">
+                        <div class="search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text"
+                                   id="productSearchInput"
+                                   class="form-control"
+                                   placeholder="상품명으로 검색…">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상품 테이블 -->
+                <div class="table-responsive">
+                    <table class="table table-cafe table-hover align-middle mb-0 fixed-table">
+                        <colgroup>
+                            <col style="width:100px;">     <!-- ID -->
+                            <col style="width:auto;">      <!-- 상품명 -->
+                            <col style="width:150px;">     <!-- 가격 -->
+                            <col style="width:120px;">     <!-- 카테고리 -->
+                            <col style="width:120px;">     <!-- 품절 유무 -->
+                            <col style="width:auto;">      <!-- 작업 -->
+                        </colgroup>
+
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>상품명</th>
+                            <th>가격</th>
+                            <th>카테고리</th>
+                            <th>품절 유무</th>
+                            <th id="th-action">작업</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                        <!-- JS로 데이터 렌더링 -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ✅ 페이지네이션: 카드 아래에 위치 -->
+        <div class="pagination-square-wrapper">
+            <div class="pagination-square" id="productPagination"></div>
+        </div>
+    </div>
+</main>
+
+<!-- 상품 추가/수정 모달 - 확장 버전 -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">상품 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+
+                    <!-- 기본 정보 섹션 -->
+                    <h6 class="text-muted mb-3 border-bottom pb-2">
+                        <i class="bi bi-info-circle me-2"></i>기본 정보
+                    </h6>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="productName">상품명 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productPrice">가격 <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="productPrice" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productStock">판매 상태</label>
+                            <select class="form-select" id="productStock">
+                                <option value="1">판매중</option>
+                                <option value="0">품절</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="productCategory">카테고리</label>
+                        <select class="form-select" id="productCategory">
+                            <option value="음료">음료</option>
+                            <option value="푸드">푸드</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="productImageUrl">상품 이미지 URL</label>
+                        <input type="text" class="form-control" id="productImageUrl" placeholder="예: https://example.com/image.jpg">
+                        <div class="form-text">이미지 URL을 입력하세요</div>
+                    </div>
+
+                    <!-- 상세 정보 섹션 -->
+                    <h6 class="text-muted mb-3 mt-4 border-bottom pb-2">
+                        <i class="bi bi-card-text me-2"></i>상세 정보
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productCalorie">칼로리</label>
+                            <input type="text" class="form-control" id="productCalorie" placeholder="예: 220kcal">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productCaffeine">카페인</label>
+                            <input type="text" class="form-control" id="productCaffeine" placeholder="예: 카페인 없음">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="productDescription">설명</label>
+                        <textarea class="form-control" id="productDescription" rows="2"
+                                  placeholder="예: 마카다미아와 고소한 쿠키"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="productAllergy">알레르기</label>
+                        <input type="text" class="form-control" id="productAllergy"
+                               placeholder="예: 밀, 우유, 견과류(마카다미아 포함), 대두, 고소한 쿠키">
+                    </div>
+
+                    <!-- 영양 정보 섹션 -->
+                    <h6 class="text-muted mb-3 mt-4 border-bottom pb-2">
+                        <i class="bi bi-heart-pulse me-2"></i>영양 정보
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productFat">포화지방</label>
+                            <input type="text" class="form-control" id="productFat" placeholder="예: 7g">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productSugar">당류</label>
+                            <input type="text" class="form-control" id="productSugar" placeholder="예: 14g">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productSodium">나트륨</label>
+                            <input type="text" class="form-control" id="productSodium" placeholder="예: 160mg">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="productProtein">단백질</label>
+                            <input type="text" class="form-control" id="productProtein" placeholder="예: 3g">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-soft" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-coffee" onclick="saveProduct()">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ 상품 상세 보기 모달 -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">상품 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body d-flex flex-wrap">
+                <!-- 이미지 영역 -->
+                <div class="me-4 mb-3" style="flex: 0 0 260px;">
+                    <img id="detailImage"
+                         src=""
+                         alt="상품 이미지"
+                         class="img-fluid rounded"
+                         style="max-height: 320px; object-fit: cover;">
+                </div>
+
+                <!-- 텍스트 영역 -->
+                <div style="flex: 1 1 auto; min-width: 240px;">
+                    <div class="detail-row">
+                        <p><span class="detail-label">상품명</span> <span class="detail-value" id="detailName"></span></p>
+                        <p><span class="detail-label">용량</span> <span class="detail-value" id="detailSize"></span></p>
+                        <p><span class="detail-label">칼로리</span> <span class="detail-value" id="detailCalorie"></span></p>
+                        <p><span class="detail-label">설명</span> <span class="detail-value" id="detailDescription"></span></p>
+                        <p><span class="detail-label">알레르기</span> <span class="detail-value" id="detailAllergy"></span></p>
+                    </div>
+
+                    <h6 class="mt-3"><strong>영양 정보</strong></h6>
+                    <ul class="mb-0">
+                        <li>포화지방: <span id="detailFat"></span></li>
+                        <li>당류: <span id="detailSugar"></span></li>
+                        <li>나트륨: <span id="detailSodium"></span></li>
+                        <li>단백질: <span id="detailProtein"></span></li>
+                        <li>카페인: <span id="detailCaffeine"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="~{fragments/footer :: mainFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/nav-common.js}"></script>
+<script th:src="@{/js/products.js}"></script>
+</body>
+</html>

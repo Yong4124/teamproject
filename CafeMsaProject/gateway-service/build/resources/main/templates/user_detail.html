@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>주문 상세 · Cafe MSA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ✅ 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- ✅ 주문 상세 전용 스타일 -->
+    <style>
+        /* 배경 (다른 페이지와 톤 맞추기) */
+        body.body-cream {
+            background: radial-gradient(circle at top, #fff7f1 0, #f2ece5 45%, #e6dfd7 100%);
+        }
+
+        .main-content .container {
+            max-width: 960px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--coffee, #5c3b2e);
+        }
+
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: #8f7a63;
+        }
+
+        .card-elevated {
+            border-radius: 1rem;
+            border: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
+        }
+
+        /* 상단 버튼 그룹 */
+        .btn-group .btn {
+            border-radius: 999px;
+            font-size: 0.88rem;
+        }
+
+        /* 주문 메타 카드 */
+        .order-meta-card .card-body {
+            padding: 1.2rem 1.4rem;
+        }
+
+        .order-meta-label {
+            font-size: 0.78rem;
+            color: #a08f7e;
+            margin-bottom: 0.15rem;
+        }
+
+        #orderNo {
+            font-weight: 700;
+            color: #4b3425;
+        }
+
+        #total {
+            color: #3b2a1f;
+            font-weight: 700;
+        }
+
+        #qty {
+            font-size: 0.95rem;
+        }
+
+        #meta {
+            font-size: 0.82rem;
+            color: #968675;
+        }
+
+        /* 상태 뱃지 (상단 요약용) */
+        #statusWrap .order-status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        #statusWrap .order-status-badge i {
+            font-size: 0.85rem;
+            margin-right: 0.25rem;
+        }
+
+        /* 로딩/에러 */
+        #loading {
+            color: #5c3b2e;
+        }
+
+        /* 테이블 카드 */
+        #tableCard .table-responsive {
+            padding: 0.75rem 1.1rem 1.1rem;
+        }
+
+        .table-cafe {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        .table-cafe thead {
+            background: linear-gradient(90deg, #5c3b2e, #8b5a3c);
+            color: #fff;
+        }
+
+        .table-cafe thead th {
+            border-bottom: none;
+            padding: 0.7rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .table-cafe tbody tr {
+            transition: background-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .table-cafe tbody td {
+            padding: 0.65rem 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #f1e4d7;
+        }
+
+        .table-cafe tbody tr:hover {
+            background: #fff7ed;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkout-product-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkout-product-thumb {
+            width: 46px;
+            height: 46px;
+            border-radius: 0.6rem;
+            object-fit: cover;
+            background: #f5eee7;
+        }
+
+        .checkout-product-name {
+            font-weight: 600;
+            color: #4b3425;
+        }
+
+        .checkout-product-meta {
+            font-size: 0.78rem;
+            color: #a08f7e;
+        }
+
+        .checkout-price-cell,
+        .checkout-subtotal-cell {
+            white-space: nowrap;
+            font-weight: 600;
+            color: #3e2d23;
+        }
+
+        .checkout-qty-cell {
+            white-space: nowrap;
+        }
+
+        /* 반응형 조정 */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between.align-items-center.mb-3 {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.75rem;
+            }
+
+            .btn-group {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 0.35rem;
+            }
+
+            .btn-group .btn {
+                flex: 1 1 auto;
+            }
+
+            .order-meta-card .card-body {
+                padding: 1rem 1rem;
+            }
+
+            #tableCard .table-responsive {
+                padding: 0.5rem 0.75rem 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="body-cream">
+
+<!-- ✅ 공통 네비 -->
+<div th:replace="~{fragments/nav :: mainNav}"></div>
+
+<main class="main-content">
+    <div class="container py-4">
+
+        <!-- 상단 제목 + 네비 버튼 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="mb-1 page-title">
+                    <i class="bi bi-receipt me-1"></i>
+                    <span id="userOrderDetail">주문 상세</span>
+                </h3>
+                <div class="page-subtitle">
+                    주문 정보를 확인하고, 필요하다면 인쇄해서 보관할 수 있어요.
+                </div>
+            </div>
+            <div class="btn-group">
+                <a href="/orders" class="btn btn-outline-coffee">
+                    <i class="bi bi-list-ul me-1"></i>내 주문 목록
+                </a>
+                <a href="/products" class="btn btn-outline-coffee">
+                    <i class="bi bi-cup-hot me-1"></i>계속 쇼핑
+                </a>
+                <button id="btn-print" class="btn btn-outline-coffee">
+                    <i class="bi bi-printer me-1"></i>인쇄
+                </button>
+            </div>
+        </div>
+
+        <!-- 로딩/에러 -->
+        <div id="loading" class="d-flex align-items-center mb-3 d-none">
+            <div class="spinner-border me-2" role="status" aria-hidden="true"></div>
+            <strong>주문 정보를 불러오는 중…</strong>
+        </div>
+        <div id="error" class="alert alert-danger d-none"></div>
+
+        <!-- 주문 메타 카드 -->
+        <div class="card card-elevated order-meta-card mb-3">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div>
+                        <div class="order-meta-label">주문번호</div>
+                        <div class="h5 mb-0" id="orderNo">#—</div>
+                    </div>
+
+                    <div class="vr d-none d-md-block"></div>
+
+                    <div>
+                        <div class="order-meta-label">상태</div>
+                        <div id="statusWrap">
+                            <!-- JS에서 상태 뱃지로 교체 -->
+
+                        </div>
+                    </div>
+
+                    <div class="vr d-none d-md-block"></div>
+
+                    <div>
+                        <div class="order-meta-label">품목수</div>
+                        <div id="qty" class="fw-semibold">0</div>
+                    </div>
+
+                    <div class="vr d-none d-md-block"></div>
+
+                    <div>
+                        <div class="order-meta-label">총 금액</div>
+                        <div id="total" class="h5 mb-0">0원</div>
+                    </div>
+                </div>
+
+                <!-- 주문 일시, 결제수단 등 텍스트로 채우기 -->
+                <div class="mt-2" id="meta">
+                    <!-- ex) 2025-11-20 19:30 · 카드 결제 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 실제 테이블 -->
+        <div id="tableCard" class="card card-elevated d-none">
+            <div class="table-responsive">
+                <table class="table table-cafe mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>상품</th>
+                        <th class="text-end">단가</th>
+                        <th class="text-end">수량</th>
+                        <th class="text-end">소계</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    <!-- JS(user_detail.js)에서 렌더링 -->
+                    <!-- 예시 형태:
+                    <tr>
+                        <td>
+                            <div class="checkout-product-info">
+                                <img src="..." class="checkout-product-thumb">
+                                <div>
+                                    <div class="checkout-product-name">아메리카노</div>
+                                    <div class="checkout-product-meta">ICE · 톨 사이즈</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-end checkout-price-cell">2,000원</td>
+                        <td class="text-end checkout-qty-cell">2</td>
+                        <td class="text-end checkout-subtotal-cell">4,000원</td>
+                    </tr>
+                    -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="~{fragments/footer :: mainFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/nav-common.js}"></script>
+<script th:src="@{/js/user_detail.js}" defer></script>
+</body>
+</html>
